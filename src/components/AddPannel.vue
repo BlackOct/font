@@ -33,7 +33,7 @@ export default class AddPannel extends Vue {
   top: 40px;
   left: 50px;
   width: 60px;
-  height: 94vh;
+  height: 96vh;
   padding: 10px;
   background-color: white;
   box-shadow: 0 0 10px 1px rgb(228, 224, 219);

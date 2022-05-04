@@ -44,55 +44,55 @@ export default class Home extends Vue {
         id: "1",
         type: "bpmn:startEvent",
         x: 100,
-        y: 100,
+        y: 200,
         text: {
           value: "开始",
           x: 100,
-          y: 140,
+          y: 240,
         },
       },
       {
         id: "2",
         type: "bpmn:userTask",
         x: 300,
-        y: 100,
+        y: 200,
         text: {
           value: "加班申请",
           x: 300,
-          y: 100,
+          y: 200,
         },
       },
       {
         id: "3",
         type: "bpmn:userTask",
         x: 500,
-        y: 100,
+        y: 200,
         text: {
           value: "领导审批",
           x: 500,
-          y: 100,
+          y: 200,
         },
       },
       {
         id: "4",
         type: "bpmn:userTask",
         x: 700,
-        y: 100,
+        y: 200,
         text: {
           value: "HR审批",
           x: 700,
-          y: 100,
+          y: 200,
         },
       },
       {
         id: "5",
         type: "bpmn:endEvent",
         x: 900,
-        y: 100,
+        y: 200,
         text: {
           value: "结束",
           x: 900,
-          y: 140,
+          y: 240,
         },
       },
     ],
@@ -100,34 +100,56 @@ export default class Home extends Vue {
       {
         sourceNodeId: "1",
         targetNodeId: "2",
+        startPoint: { x: 110, y: 200 },
+        endPoint: { x: 250, y: 200 },
         type: "line",
-        id: "ad7dc22f-f8fa-42bc-a3f3-451f60fcbc1c",
-        startPoint: { x: 118, y: 100 },
-        endPoint: { x: 250, y: 100 },
       },
       {
-        endPoint: { x: 450, y: 100 },
+        endPoint: { x: 450, y: 200 },
         id: "edce5650-8af4-4485-8816-1d97000310f8",
         sourceNodeId: "2",
         targetNodeId: "3",
         type: "line",
-        startPoint: { x: 350, y: 100 },
+        text: "提交审批",
+        startPoint: { x: 350, y: 200 },
       },
       {
         sourceNodeId: "3",
         targetNodeId: "4",
         type: "line",
-        endPoint: { x: 650, y: 100 },
-        startPoint: { x: 550, y: 100 },
-        id: "7baaa9ae-391c-4fa2-9a6a-44e6b0e644a0",
+        text: "审批通过",
+        endPoint: { x: 650, y: 200 },
+        startPoint: { x: 550, y: 200 },
       },
       {
-        id: "af3d4e5e-3a9f-4076-bc04-56738bfc0b52",
         sourceNodeId: "4",
         targetNodeId: "5",
         type: "line",
-        startPoint: { x: 750, y: 100 },
-        endPoint: { x: 882, y: 100 },
+        text: "审批通过",
+      },
+      {
+        sourceNodeId: "3",
+        targetNodeId: "5",
+        type: "polyline",
+        text: "审批不通过",
+        pointsList: [
+          { x: 500, y: 240 },
+          { x: 500, y: 300 },
+          { x: 300, y: 300 },
+          { x: 300, y: 240 },
+        ],
+      },
+      {
+        sourceNodeId: "4",
+        targetNodeId: "2",
+        type: "polyline",
+        text: "审批不通过",
+        pointsList: [
+          { x: 700, y: 240 },
+          { x: 700, y: 120 },
+          { x: 300, y: 120 },
+          { x: 300, y: 150 },
+        ],
       },
     ],
   };
@@ -166,13 +188,6 @@ export default class Home extends Vue {
     LogicFlow.use(BpmnAdapter);
     // 画布配置
     this.lf = new LogicFlow({
-      container: this.$refs.container,
-      plugins: [Group, DndPanel, BpmnElement, SelectionSelect, Snapshot],
-    });
-    //this.lf.register(CustomHexagon);
-    this.lf.render({
-      nodes: this.data.nodes,
-      edges: this.data.edges,
       grid: {
         size: 20,
         visible: true,
@@ -182,6 +197,13 @@ export default class Home extends Vue {
           thickness: 1,
         },
       },
+      container: this.$refs.container,
+      plugins: [Group, DndPanel, BpmnElement, SelectionSelect, Snapshot],
+    });
+    //this.lf.register(CustomHexagon);
+    this.lf.render({
+      nodes: this.data.nodes,
+      edges: this.data.edges,
     });
 
     // 设置主题
@@ -192,7 +214,7 @@ export default class Home extends Vue {
       },
     });
     this.registerNode();
-    console.log(this.lf.getGraphData().edges);
+    console.log(this.lf.getGraphData());
   }
   registerNode() {
     registerStart(this.lf);

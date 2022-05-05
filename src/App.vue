@@ -15,13 +15,13 @@
             <el-submenu index="">
               <template slot="title">
                 <i class="el-icon-s-data"></i>
-                <span>keepAlive</span>
+                <span>logicFlow</span>
               </template>
               <el-menu-item index="/principle"
                 >TypeScript Principle</el-menu-item
               >
               <el-menu-item index="/about">LogicFlow Principle</el-menu-item>
-              <el-menu-item index="/home">Example 2</el-menu-item>
+              <el-menu-item index="/home">demo</el-menu-item>
             </el-submenu>
           </el-menu>
         </el-aside>

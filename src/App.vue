@@ -21,7 +21,7 @@
                 >TypeScript Principle</el-menu-item
               >
               <el-menu-item index="/about">LogicFlow Principle</el-menu-item>
-              <el-menu-item index="/home">demo</el-menu-item>
+              <el-menu-item index="/TurboAdpter">TurboAdpter</el-menu-item>
             </el-submenu>
           </el-menu>
         </el-aside>
@@ -38,29 +38,28 @@
 </template>
 <script>
 /* eslint-disable */
-import { Vue } from "vue-property-decorator";
-import Component from "vue-class-component";
-@Component({})
-export default class App extends Vue {
+
+export default {
   key() {
     return this.$router.name !== undefined
       ? this.$router.name + new Date()
       : this.$router + new Date();
-  }
+  },
   mounted() {
     console.log(this.$router.fullPath);
-  }
-
-  handleSelect(index, key) {
-    console.log(key);
-    console.log(index);
-    this.$router.push({
-      path: index,
-    });
-  }
-}
+  },
+  methods: {
+    handleSelect(index, key) {
+      console.log(key);
+      console.log(index);
+      this.$router.push({
+        path: index,
+      });
+    },
+  },
+};
 </script>
-<style lang="scss" scoped>
+<style  scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -88,13 +87,13 @@ body {
 
 .el-aside {
   width: 200px;
-  height: calc(100vh - 112px);
+  height: calc(100vh - 120px);
   background-color: #d3dce6;
   color: #333;
 }
 
 .el-main {
-  height: calc(100vh - 112px);
+  height: calc(100vh - 120px);
   padding: 15px;
   background-color: #e9eef3;
   color: #333;

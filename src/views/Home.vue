@@ -1,6 +1,7 @@
 <template>
   <div class="logic-flow-view">
     <h3 class="demo-title">LogicFlow Vue demo</h3>
+    <el-button @click="exportAdapterData">点击下载</el-button>
     <!-- 辅助工具栏 -->
     <!-- 节点面板 -->
     <NodePanel :lf="lf" :nodeData="nodeList"></NodePanel>
@@ -15,22 +16,22 @@ import LogicFlow from "@logicflow/core";
 import "@logicflow/core/dist/style/index.css";
 import { Vue } from "vue-property-decorator";
 import {
-  Group,
-  DndPanel,
   BpmnElement,
-  SelectionSelect,
-  Snapshot,
   BpmnAdapter,
+  Menu,
+  Snapshot,
+  MiniMap,
 } from "@logicflow/extension";
 import "@logicflow/extension/lib/style/index.css";
 import Component from "vue-class-component";
 import NodePanel from "./../components/AddPannel.vue";
+import customEdge from "./../components/customEdge";
 
-import {
+/*import {
   registerStart,
   registerEnd,
   registerUser,
-} from "./../components/registerNode";
+} from "./../components/registerNode";*/
 @Component({
   components: {
     NodePanel,
@@ -38,10 +39,10 @@ import {
 })
 export default class Home extends Vue {
   // 节点
-  data = {
+  /*data = {
     nodes: [
       {
-        id: "1",
+        id: "Event_2cn81un",
         type: "bpmn:startEvent",
         x: 100,
         y: 200,
@@ -52,7 +53,7 @@ export default class Home extends Vue {
         },
       },
       {
-        id: "2",
+        id: "Activity_14ui9nt",
         type: "bpmn:userTask",
         x: 300,
         y: 200,
@@ -63,7 +64,7 @@ export default class Home extends Vue {
         },
       },
       {
-        id: "3",
+        id: "Activity_1pqgup4",
         type: "bpmn:userTask",
         x: 500,
         y: 200,
@@ -74,85 +75,143 @@ export default class Home extends Vue {
         },
       },
       {
-        id: "4",
+        id: "Gateway_3j124mc",
+        type: "bpmn:exclusiveGateway",
+        x: 620,
+        y: 200,
+        properties: {
+          a: "efrwe",
+          b: "wewe",
+          name: "网关",
+        },
+        text: {
+          x: 620,
+          y: 200,
+          value: "网关",
+        },
+      },
+      {
+        id: "Activity_2tcsndc",
         type: "bpmn:userTask",
-        x: 700,
+        x: 780,
         y: 200,
         text: {
           value: "HR审批",
-          x: 700,
+          x: 780,
           y: 200,
         },
       },
       {
-        id: "5",
+        id: "Gateway_2uicbeb",
+        type: "bpmn:exclusiveGateway",
+        x: 780,
+        y: 320,
+        properties: {
+          a: "efrwe",
+          b: "wewe",
+          name: "网关",
+        },
+        text: {
+          x: 780,
+          y: 320,
+          value: "网关",
+        },
+      },
+      {
+        id: "Event_3s20rlm",
         type: "bpmn:endEvent",
-        x: 900,
-        y: 200,
+        x: 880,
+        y: 320,
         text: {
           value: "结束",
-          x: 900,
-          y: 240,
+          x: 880,
+          y: 320,
         },
       },
     ],
     edges: [
       {
-        sourceNodeId: "1",
-        targetNodeId: "2",
+        id: "Flow_238i5fu",
+        sourceNodeId: "Event_2cn81un",
+        targetNodeId: "Activity_14ui9nt",
         startPoint: { x: 110, y: 200 },
         endPoint: { x: 250, y: 200 },
-        type: "line",
+        type: "bpmn:sequenceFlow",
       },
       {
+        id: "Flow_1pl8fs1",
         endPoint: { x: 450, y: 200 },
-        id: "edce5650-8af4-4485-8816-1d97000310f8",
-        sourceNodeId: "2",
-        targetNodeId: "3",
-        type: "line",
+        sourceNodeId: "Activity_14ui9nt",
+        targetNodeId: "Activity_1pqgup4",
+        type: "bpmn:sequenceFlow",
         text: "提交审批",
         startPoint: { x: 350, y: 200 },
       },
       {
-        sourceNodeId: "3",
-        targetNodeId: "4",
-        type: "line",
-        text: "审批通过",
-        endPoint: { x: 650, y: 200 },
-        startPoint: { x: 550, y: 200 },
+        id: "Flow_19q0js9",
+        sourceNodeId: "Activity_1pqgup4",
+        targetNodeId: "Gateway_3j124mc",
+        type: "bpmn:sequenceFlow",
+        text: "next",
+        endPoint: { x: 600, y: 200 },
+        startPoint: { x: 545, y: 200 },
       },
       {
-        sourceNodeId: "4",
-        targetNodeId: "5",
-        type: "line",
+        id: "Flow_3tho3ch",
+        sourceNodeId: "Activity_2tcsndc",
+        targetNodeId: "Gateway_3j124mc",
+        type: "bpmn:sequenceFlow",
         text: "审批通过",
+        endPoint: { x: 730, y: 200 },
+        startPoint: { x: 640, y: 200 },
       },
       {
-        sourceNodeId: "3",
-        targetNodeId: "5",
-        type: "polyline",
+        id: "Flow_2igk9uv",
+        sourceNodeId: "Activity_2tcsndc",
+        targetNodeId: "Gateway_2uicbeb",
+        type: "bpmn:sequenceFlow",
+        endPoint: { x: 780, y: 290 },
+        startPoint: { x: 780, y: 220 },
+      },
+      {
+        id: "Flow_3o86v5b",
+        sourceNodeId: "Activity_1pqgup4",
+        targetNodeId: "Activity_2tcsndc",
+        type: "bpmn:sequenceFlow",
         text: "审批不通过",
         pointsList: [
-          { x: 500, y: 240 },
-          { x: 500, y: 300 },
+          { x: 620, y: 220 },
+          { x: 620, y: 300 },
           { x: 300, y: 300 },
           { x: 300, y: 240 },
         ],
       },
       {
-        sourceNodeId: "4",
-        targetNodeId: "2",
-        type: "polyline",
+        id: "Flow_1ch711i",
+        sourceNodeId: "Gateway_2uicbeb",
+        targetNodeId: "Event_3s20rlm",
+        type: "bpmn:sequenceFlow",
+        text: "通过",
+        pointsList: [
+          { x: 800, y: 320 },
+          { x: 860, y: 320 },
+        ],
+      },
+      {
+        id: "Flow_3rlhimt",
+        sourceNodeId: "Gateway_3j124mc",
+        targetNodeId: "Activity_14ui9nt",
+        type: "bpmn:sequenceFlow",
         text: "审批不通过",
         pointsList: [
-          { x: 700, y: 240 },
-          { x: 700, y: 120 },
-          { x: 300, y: 120 },
-          { x: 300, y: 150 },
+          { x: 780, y: 300 },
+          { x: 780, y: 360 },
+          { x: 280, y: 360 },
+          { x: 280, y: 240 },
         ],
       },
     ],
-  };
+  };*/
   nodeList = [
     {
       type: "bpmn:startEvent",
@@ -185,73 +244,57 @@ export default class Home extends Vue {
   }
 
   initLf() {
-    LogicFlow.use(BpmnAdapter);
     // 画布配置
     this.lf = new LogicFlow({
-      grid: {
-        size: 20,
-        visible: true,
-        type: "dot",
-        config: {
-          color: "#ababab",
-          thickness: 1,
-        },
-      },
+      grid: true,
+      plugins: [BpmnElement, BpmnAdapter, Snapshot, Menu, MiniMap],
       container: this.$refs.container,
-      plugins: [Group, DndPanel, BpmnElement, SelectionSelect, Snapshot],
     });
+    //this.lf.extension.dndPanel.setPatternItems(this.nodeList);
     //this.lf.register(CustomHexagon);
-    this.lf.render({
-      nodes: this.data.nodes,
-      edges: this.data.edges,
-    });
 
     // 设置主题
     this.lf.setTheme({
-      snapline: {
-        stroke: "#1E90FF", // 对齐线颜色
-        strokeWidth: 1, // 对齐线宽度
+      edgeText: {
+        textWidth: 100,
+        overflowMode: "autoWrap",
+        fontSize: 12,
+        background: {
+          fill: "#FFFFFF",
+        },
       },
     });
-    this.registerNode();
+    //this.registerNode();
+
+    this.lf.register(customEdge);
+    this.lf.setDefaultEdgeType("custom-edge");
+    this.lf.render();
     console.log(this.lf.getGraphData());
   }
-  registerNode() {
+  download(filename, text) {
+    const element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+    );
+    element.setAttribute("download", filename);
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
+  exportAdapterData() {
+    const adapterData = this.lf.getGraphData();
+    this.download("logic-flow.json", JSON.stringify(adapterData));
+  }
+
+  /*registerNode() {
     registerStart(this.lf);
     registerEnd(this.lf);
     registerUser(this.lf);
-    this.LfEvent();
-  }
-  LfEvent() {
-    this.lf.on("node:click", ({ data }) => {
-      console.log("node:click", data);
-      this.$data.clickNode = data;
-      this.$data.dialogVisible = true;
-    });
-    this.lf.on("edge:click", ({ data }) => {
-      console.log("edge:click", data);
-      this.$data.clickNode = data;
-      this.$data.dialogVisible = true;
-    });
-
-    this.lf.on("edge:add", ({ data }) => {
-      console.log("edge:add", data);
-    });
-    this.lf.on("node:mousemove", ({ data }) => {
-      console.log("node:mousemove");
-      this.moveData = data;
-    });
-
-    this.lf.on("connection:not-allowed", (data) => {
-      this.$message({
-        type: "error",
-        message: data.msg,
-      });
-    });
-    this.lf.on("node:mousemove", () => {
-      console.log("on mousemove");
-    });
-  }
+    setDndPanel(this.lf);
+  }*/
 }
 </script>
 

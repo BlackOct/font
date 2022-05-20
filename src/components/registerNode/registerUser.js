@@ -57,6 +57,9 @@ export default function registerUser (lf) {
           x: data.x,
           y: data.y + 50
         }
+        data.properties = {
+          assignee: "admin"
+        }
         super(data, graphModel)
         // 右键菜单自由配置，也可以通过边的properties或者其他属性条件更换不同菜单
         this.menu = [

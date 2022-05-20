@@ -16,7 +16,10 @@ export default function registerTask (lf) {
       }
     }
     class Model extends RectNodeModel {
-      constructor (data, graphModel) {
+      constructor(data, graphModel) {
+        data.properties = {
+          assignee: "admin"
+        }
         super(data, graphModel)
         this.radius = 20;
       }

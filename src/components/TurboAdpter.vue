@@ -3,6 +3,9 @@
     <div class="flex">
       <h3 class="demo-title">LogicFlow Turbo Adpter</h3>
       <el-button type="text" @click="exportAdapterData"
+        >保存AdpterXML data</el-button
+      >
+      <el-button type="text" @click="exportAdapterDataJson"
         >保存Adpter data</el-button
       >
     </div>
@@ -17,14 +20,17 @@
 </template>
 <script>
 import LogicFlow from "@logicflow/core";
-import { Snapshot, BpmnElement, BpmnAdapter } from "@logicflow/extension";
+import {
+  Snapshot,
+  BpmnElement,
+  BpmnAdapter,
+  BpmnXmlAdapter,
+} from "@logicflow/extension";
 import "@logicflow/core/dist/style/index.css";
 import "@logicflow/extension/lib/style/index.css";
 import NodePanel from "./LFComponents/NodePanel";
-import { toLogicflowData } from "../Util/AdpterForTurbo";
 import { BpmnNode } from "./config";
-const demoData = require("./dataTurbo.json");
-
+const nodeData = require("./response.json");
 export default {
   name: "LF",
   components: { NodePanel },
@@ -42,6 +48,24 @@ export default {
         },
       },
       nodeList: BpmnNode,
+      eBpmnElements: {
+        START: "bpmn:startEvent",
+        END: "bpmn:endEvent",
+        GATEWAY: "bpmn:exclusiveGateway",
+        USER: "bpmn:userTask",
+        SYSTEM: "bpmn:serviceTask",
+        FLOW: "bpmn:sequenceFlow",
+      },
+
+      defaultAttrs: [
+        "-name",
+        "-id",
+        "bpmn:incoming",
+        "bpmn:outgoing",
+        "-sourceRef",
+        "-targetRef",
+      ],
+      shapeConfigMap: new Map(),
     };
   },
   mounted() {
@@ -53,22 +77,49 @@ export default {
       LogicFlow.use(Snapshot);
       // 使用bpmn插件，引入bpmn元素，这些元素可以在turbo中转换后使用
       LogicFlow.use(BpmnElement);
-      LogicFlow.use(BpmnAdapter);
+      LogicFlow.use(BpmnXmlAdapter);
+      if (nodeData) {
+        LogicFlow.use(BpmnAdapter);
+      }
       const lf = new LogicFlow({
         ...this.config,
         container: this.$refs.container,
       });
       this.lf = lf;
+      //this.adapterIn(nodeData);
       // 设置边类型bpmn:sequenceFlow为默认类型
-      lf.setDefaultEdgeType("bpmn:sequenceFlow");
-      this.$_render();
-    },
-    $_render() {
-      // Turbo数据转换为LogicFlow内部识别的数据结构
-      const lFData = toLogicflowData(demoData);
-      this.lf.render(lFData);
+      //lf.setDefaultEdgeType("bpmn:sequenceFlow");
+
+      this.lf.render(nodeData);
+      this.lf.getGraphData();
+      console.log(this.lf.getGraphData());
     },
     download(filename, text) {
+      var element = document.createElement("a");
+      element.setAttribute(
+        "href",
+        "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+      );
+      element.setAttribute("download", filename);
+
+      element.style.display = "none";
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
+    },
+    renderXml(xml) {
+      this.lf.render(xml);
+    },
+
+    exportAdapterData() {
+      const data = this.lf.getGraphData();
+      this.download("logic-flow.xml", data);
+      console.log(data);
+      window.sessionStorage.setItem("lf-data", data);
+    },
+    downloadJson(filename, text) {
       const element = document.createElement("a");
       element.setAttribute(
         "href",
@@ -81,9 +132,9 @@ export default {
       document.body.removeChild(element);
     },
 
-    exportAdapterData() {
+    exportAdapterDataJson() {
       const adapterData = this.lf.getGraphData();
-      this.download("logic-flow.json", JSON.stringify(adapterData));
+      this.downloadJson("logic-flow.json", JSON.stringify(adapterData));
     },
   },
 };

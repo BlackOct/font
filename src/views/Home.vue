@@ -285,8 +285,8 @@ export default class Home extends Vue {
   }
 
   exportAdapterData() {
-    const adapterData = this.lf.getGraphData();
-    this.download("logic-flow.json", JSON.stringify(adapterData));
+    const data = this.lf.getGraphData();
+    download("logic-flow.xml", data);
   }
 
   /*registerNode() {

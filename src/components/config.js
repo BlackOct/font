@@ -53,6 +53,11 @@ export const BpmnNode = [
     class: 'bpmn-exclusiveGateway'
   },
   {
+    type: 'bpmn:serviceTask',
+    text: '服务',
+    class:'node-rect'
+  },
+  {
     type: 'bpmn:userTask',
     text: '用户',
     class: 'bpmn-user'

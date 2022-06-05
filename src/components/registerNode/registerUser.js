@@ -58,7 +58,43 @@ export default function registerUser (lf) {
           y: data.y + 50
         }
         data.properties = {
-          assignee: "admin"
+          assignee: "admin",
+          process_id: "332323232",
+          //name: "listenerTest",
+          //documentation: "test",
+          process_author: "",
+          process_version: "",
+          process_namespace: "http://www.activiti.org/processdef",
+          executionlisteners: "",
+          eventlisteners: {
+              event: "ENTITY_CREATED",
+              implementation: "io.workflow.engine.activi.core.model.editor.testListener",
+              className: "io.workflow.engine.activi.core.model.editor.testListener",
+              delegateExpression: "io.workflow.engine.activi.core.Exception",
+              retrowEvent: false,
+              fields: [],
+              events: {
+                event: "ENTITY_CREATED",
+                $$hashKey: "object:2221"
+              },
+              entityType: "Text",
+              $$hashKey: "uiGrid-01U"
+          },
+          eventlistenerName: { 
+            event: "ENTITY_CREATED",
+            implementation: "io.workflow.engine.activi.core.model.editor.testListener",
+            delegateExpression: "io.workflow.engine.activi.core.Exception",
+            retrowEvent: false,
+            fields: [],
+            events: {
+              event: "ENTITY_CREATED",
+              $$hashKey: "object:2221"
+            },
+            entityType: "Text",
+            $$hashKey: "uiGrid-01U"
+        },
+          signaldefinitions: "",
+          messagedefinitions: ""
         }
         super(data, graphModel)
         // 右键菜单自由配置，也可以通过边的properties或者其他属性条件更换不同菜单

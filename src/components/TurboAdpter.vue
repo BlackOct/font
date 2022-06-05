@@ -20,16 +20,21 @@
 </template>
 <script>
 import LogicFlow from "@logicflow/core";
-import {
-  Snapshot,
-  BpmnElement,
-  BpmnAdapter,
-  BpmnXmlAdapter,
-} from "@logicflow/extension";
+import { Snapshot, BpmnElement, BpmnAdapter, Menu } from "@logicflow/extension";
 import "@logicflow/core/dist/style/index.css";
 import "@logicflow/extension/lib/style/index.css";
 import NodePanel from "./LFComponents/NodePanel";
-import { BpmnNode } from "./config";
+import {
+  registerStart,
+  registerUser,
+  registerEnd,
+  registerPush,
+  registerDownload,
+  registerPolyline,
+  registerTask,
+  registerConnect,
+} from "./registerNode";
+//import { BpmnNode } from "./config";
 const nodeData = require("./response.json");
 export default {
   name: "LF",
@@ -47,29 +52,40 @@ export default {
           enabled: true,
         },
       },
-      nodeList: BpmnNode,
-      eBpmnElements: {
-        START: "bpmn:startEvent",
-        END: "bpmn:endEvent",
-        GATEWAY: "bpmn:exclusiveGateway",
-        USER: "bpmn:userTask",
-        SYSTEM: "bpmn:serviceTask",
-        FLOW: "bpmn:sequenceFlow",
-      },
-
-      defaultAttrs: [
-        "-name",
-        "-id",
-        "bpmn:incoming",
-        "bpmn:outgoing",
-        "-sourceRef",
-        "-targetRef",
+      nodeList: [
+        {
+          type: "start",
+          text: "开始",
+          class: "bpmn-start",
+        },
+        {
+          type: "end",
+          text: "结束",
+          class: "bpmn-end",
+        },
+        {
+          type: "bpmn:exclusiveGateway",
+          text: "网关",
+          class: "bpmn-exclusiveGateway",
+        },
+        {
+          type: "ServiceTask",
+          text: "服务",
+          class: "node-rect",
+        },
+        {
+          type: "user",
+          text: "用户",
+          class: "bpmn-user",
+        },
       ],
+
       shapeConfigMap: new Map(),
     };
   },
   mounted() {
     this.$_initLf();
+    this.renderClick();
   },
   methods: {
     $_initLf() {
@@ -77,10 +93,9 @@ export default {
       LogicFlow.use(Snapshot);
       // 使用bpmn插件，引入bpmn元素，这些元素可以在turbo中转换后使用
       LogicFlow.use(BpmnElement);
-      LogicFlow.use(BpmnXmlAdapter);
-      if (nodeData) {
-        LogicFlow.use(BpmnAdapter);
-      }
+      LogicFlow.use(BpmnAdapter);
+      //LogicFlow.use(BpmnXmlAdapter);
+      LogicFlow.use(Menu);
       const lf = new LogicFlow({
         ...this.config,
         container: this.$refs.container,
@@ -89,10 +104,19 @@ export default {
       //this.adapterIn(nodeData);
       // 设置边类型bpmn:sequenceFlow为默认类型
       //lf.setDefaultEdgeType("bpmn:sequenceFlow");
-
+      this.registerNode();
       this.lf.render(nodeData);
       this.lf.getGraphData();
-      console.log(this.lf.getGraphData());
+      this.lf.register(registerTask);
+    },
+    registerNode() {
+      registerStart(this.lf);
+      registerUser(this.lf);
+      registerEnd(this.lf);
+      registerPush(this.lf, this.clickPlus, this.mouseDownPlus);
+      registerDownload(this.lf);
+      registerPolyline(this.lf);
+      registerConnect(this.lf);
     },
     download(filename, text) {
       var element = document.createElement("a");
@@ -109,14 +133,25 @@ export default {
 
       document.body.removeChild(element);
     },
-    renderXml(xml) {
-      this.lf.render(xml);
+    renderClick() {
+      this.lf.on("node:click", ({ data }) => {
+        console.log(data);
+        // const model = lf.graphModel.getElement(data.id)
+        // model.fill = 'red'
+        // console.log(data.id)
+        // console.log(lf.getGraphData())
+        // lf.changeNodeId(data.id)
+      });
+      this.lf.on("node:dnd-add", (data) => {
+        console.log(data);
+      });
     },
 
     exportAdapterData() {
       const data = this.lf.getGraphData();
       this.download("logic-flow.xml", data);
-      console.log(data);
+      //sconsole.log(data);
+      console.log(this.lf.getGraphData(), "9999");
       window.sessionStorage.setItem("lf-data", data);
     },
     downloadJson(filename, text) {
@@ -134,6 +169,7 @@ export default {
 
     exportAdapterDataJson() {
       const adapterData = this.lf.getGraphData();
+      console.log(adapterData);
       this.downloadJson("logic-flow.json", JSON.stringify(adapterData));
     },
   },
